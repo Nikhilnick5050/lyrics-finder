@@ -21,7 +21,7 @@ A simple Flutter app to search for song lyrics using the Genius API.
    - Go to https://genius.com/api-clients
    - Sign up and create a new API client
    - Copy your API key
-
+[text](lib/services)
 2. Update the API key in the app:
    - Open `lib/services/lyrics_service.dart`
    - Find the line: `static const String apiKey = 'YOUR_GENIUS_API_KEY_HERE';`
