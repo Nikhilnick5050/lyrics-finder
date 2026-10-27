@@ -32,7 +32,7 @@ jobs:
 
       - run: flutter pub get
 
-      - run: flutter build apk --release
+      - run: flutter build apk --release --dart-define=GENIUS_API_KEY=${{ secrets.GENIUS_API_KEY }}
 
       - uses: actions/upload-artifact@v4
         with:
