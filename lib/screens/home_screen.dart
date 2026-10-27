@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:share_plus/share_plus.dart';
-import 'services/lyrics_service.dart';
-import 'models/lyrics_model.dart';
+import 'package:lyrics_finder/models/lyrics_model.dart';
+import 'package:lyrics_finder/services/lyrics_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
