@@ -57,6 +57,37 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Future<void> _showApiKeyDialog() async {
+    final controller = TextEditingController(
+      text: await _lyricsService.getSavedApiKey() ?? '',
+    );
+    await showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Genius API Key'),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(
+            hintText: 'Paste your Genius API key',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () async {
+              await _lyricsService.saveApiKey(controller.text);
+              if (context.mounted) Navigator.pop(context);
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,6 +95,12 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Lyrics Finder'),
         centerTitle: true,
         elevation: 2,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: _showApiKeyDialog,
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

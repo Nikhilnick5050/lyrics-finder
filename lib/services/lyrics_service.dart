@@ -1,14 +1,32 @@
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'models/lyrics_model.dart';
 
 class LyricsService extends GetxService {
-  static const String apiKey = 'YOUR_GENIUS_API_KEY_HERE';
+  static const String _defaultKey = 'YOUR_GENIUS_API_KEY_HERE';
+  static const String _keyPref = 'genius_api_key';
+
+  Future<String> _getApiKey() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_keyPref) ?? _defaultKey;
+  }
+
+  Future<void> saveApiKey(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_keyPref, key.trim());
+  }
+
+  Future<String?> getSavedApiKey() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_keyPref);
+  }
 
   /// Search for a song and fetch lyrics
   Future<LyricsModel?> fetchLyrics(String songName) async {
     try {
+      final apiKey = await _getApiKey();
       // 1. Search for the song
       final searchUrl = Uri.parse(
         'https://api.genius.com/search?q=${Uri.encodeComponent(songName)}',
