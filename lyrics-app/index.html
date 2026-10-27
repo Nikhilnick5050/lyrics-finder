@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lyrics Finder</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --card: #1a1d27;
+    --border: #2a2e3d;
+    --text: #e8eaf0;
+    --muted: #9aa0b0;
+    --accent: #7c5cff;
+    --accent-text: #ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 24px 16px;
+  }
+  .app { width: 100%; max-width: 640px; }
+  h1 { font-size: 28px; margin-bottom: 4px; }
+  .sub { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+  .search-box { display: flex; gap: 10px; margin-bottom: 24px; }
+  input {
+    flex: 1;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    font-size: 16px;
+    outline: none;
+  }
+  input:focus { border-color: var(--accent); }
+  button {
+    padding: 14px 22px;
+    border-radius: 12px;
+    border: none;
+    background: var(--accent);
+    color: var(--accent-text);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  button:hover { opacity: 0.9; }
+  .status { color: var(--muted); font-size: 14px; margin-bottom: 16px; min-height: 20px; }
+  .lyrics-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    display: none;
+  }
+  .lyrics-card h2 { font-size: 20px; margin-bottom: 4px; }
+  .lyrics-card .artist { color: var(--muted); font-size: 14px; margin-bottom: 16px; }
+  pre {
+    white-space: pre-wrap;
+    font-family: inherit;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text);
+  }
+  .error { color: #ff6b6b; }
+</style>
+</head>
+<body>
+  <div class="app">
+    <h1>Lyrics Finder</h1>
+    <p class="sub">Search any song and get its lyrics instantly.</p>
+    <div class="search-box">
+      <input id="q" placeholder="Song name (e.g. Shape of You)" />
+      <button onclick="search()">Search</button>
+    </div>
+    <p class="status" id="status"></p>
+    <div class="lyrics-card" id="card">
+      <h2 id="title"></h2>
+      <p class="artist" id="artist"></p>
+      <pre id="lyrics"></pre>
+    </div>
+  </div>
+  <script>
+    async function search() {
+      const q = document.getElementById('q').value.trim();
+      const status = document.getElementById('status');
+      const card = document.getElementById('card');
+      if (!q) { status.textContent = 'Please enter a song name.'; return; }
+      status.textContent = 'Searching...';
+      card.style.display = 'none';
+      // Try to split "Artist - Title" if provided
+      let artist = '', title = q;
+      if (q.includes(' - ')) {
+        const parts = q.split(' - ');
+        artist = parts[0].trim();
+        title = parts[1].trim();
+      }
+      try {
+        let url;
+        if (artist) {
+          url = 'https://api.lyrics.ovh/v1/' + encodeURIComponent(artist) + '/' + encodeURIComponent(title);
+        } else {
+          // Search by title only: try common artist guess via iTunes search
+          const itunes = await fetch('https://itunes.apple.com/search?term=' + encodeURIComponent(title) + '&limit=1&media=music');
+          const itunesData = await itunes.json();
+          if (itunesData.results && itunesData.results.length > 0) {
+            artist = itunesData.results[0].artistName;
+            title = itunesData.results[0].trackName;
+          }
+          url = 'https://api.lyrics.ovh/v1/' + encodeURIComponent(artist) + '/' + encodeURIComponent(title);
+        }
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.lyrics) {
+          document.getElementById('title').textContent = title;
+          document.getElementById('artist').textContent = artist;
+          document.getElementById('lyrics').textContent = data.lyrics;
+          card.style.display = 'block';
+          status.textContent = '';
+        } else {
+          status.textContent = 'Lyrics not found. Try "Artist - Song Name".';
+          status.className = 'status error';
+        }
+      } catch (e) {
+        status.textContent = 'Something went wrong. Please try again.';
+        status.className = 'status error';
+      }
+    }
+    document.getElementById('q').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') search();
+    });
+  </script>
+</body>
+</html>
