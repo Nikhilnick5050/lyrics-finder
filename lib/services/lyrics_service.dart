@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import 'models/lyrics_model.dart';
+import 'package:lyrics_finder/models/lyrics_model.dart';
 
 class LyricsService extends GetxService {
   static const String _defaultKey = 'YOUR_GENIUS_API_KEY_HERE';
