@@ -9,7 +9,13 @@ class LyricsService extends GetxService {
   static const String _defaultKey = 'YOUR_GENIUS_API_KEY_HERE';
   static const String _keyPref = 'genius_api_key';
 
+  // Injected at build time via --dart-define=GENIUS_API_KEY=...
+  static const String _buildKey = String.fromEnvironment('GENIUS_API_KEY');
+
   Future<String> _getApiKey() async {
+    // 1. Build-time key (from the GitHub secret)
+    if (_buildKey.isNotEmpty) return _buildKey;
+    // 2. User-saved key (settings gear)
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_keyPref) ?? _defaultKey;
   }
