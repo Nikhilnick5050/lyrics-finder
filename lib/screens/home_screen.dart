@@ -51,9 +51,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _shareLyrics() async {
     if (_lyrics == null) return;
-    await Share.share(
-      '🎵 ${_lyrics!.title} by ${_lyrics!.artist}\n\nLyrics:\n\n${_lyrics!.lyrics}',
-      subject: 'Lyrics for ${_lyrics!.title}',
+    await SharePlus.instance.share(
+      ShareParams(
+        text: '🎵 ${_lyrics!.title} by ${_lyrics!.artist}\n\nLyrics:\n\n${_lyrics!.lyrics}',
+        subject: 'Lyrics for ${_lyrics!.title}',
+      ),
     );
   }
 
