@@ -1,40 +1,10 @@
-name: Build APK v4
+name: Deprecated (v4)
 
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
 
 jobs:
-  build:
+  noop:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-
-      - name: Regenerate modern Android project
-        run: |
-          cp -r lib /tmp/lib_backup
-          cp pubspec.yaml /tmp/pubspec_backup.yaml
-          rm -rf android
-          flutter create --platforms=android --org com.classgrid --project-name lyrics_finder .
-          rm -rf lib
-          cp -r /tmp/lib_backup lib
-          cp /tmp/pubspec_backup.yaml pubspec.yaml
-
-      - run: flutter pub get
-
-      - run: flutter build apk --release
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: lyrics-finder-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+      - run: echo "Deprecated workflow. Use build-apk.yml"
