@@ -1,27 +1,10 @@
-name: Build APK
+name: Deprecated (v2)
 
 on:
-  push:
-    branches: [ main, master ]
   workflow_dispatch:
 
 jobs:
-  build:
+  noop:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-
-      - run: flutter create --platforms=android --org com.classgrid .
-
-      - run: flutter pub get
-
-      - run: flutter build apk --release
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: lyrics-finder-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+      - run: echo "Deprecated workflow. Use build-apk.yml"
