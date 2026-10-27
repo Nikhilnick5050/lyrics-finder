@@ -2,6 +2,10 @@
 
 A simple Flutter app to search for song lyrics using the Genius API.
 
+## About
+
+Lyrics Finder is a lightweight mobile application built with Flutter that lets users quickly search for and view song lyrics from the Genius API. It features a clean, Material 3-based interface with search, display, and sharing capabilities.
+
 ## Features
 
 - Search for songs by name
